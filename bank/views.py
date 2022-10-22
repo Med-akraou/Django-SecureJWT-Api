@@ -8,6 +8,7 @@ from django.http import Http404
 from rest_framework.pagination import LimitOffsetPagination
 import jwt
 from django.core.exceptions import PermissionDenied
+from django_filters.rest_framework import DjangoFilterBackend
 
 # Create your views here.
 
@@ -101,9 +102,9 @@ class ImputationsespecesCreate(CreateAPIView):
 
 
 class ImputationsespecesRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
+    queryset = Imputationsespeces.objects.all()
     lookup_field = 'id'
-    serializer_class = ProductSerializer
+    serializer_class = ImputationsespecesSerializer
 
 
 

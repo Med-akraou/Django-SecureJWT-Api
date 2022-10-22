@@ -7,7 +7,7 @@ from .serializers import UserSerializer
 from .models import User
 from rest_framework import status
 import jwt, datetime
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 # Create your views here.
 
@@ -20,7 +20,7 @@ class RegisterView(APIView):
         return Response(serializer.data, status= status.HTTP_201_CREATED)
 
 class LoginView(APIView):
-
+    permission_classes = [AllowAny]
     def post(self, request):
         email = request.data['email']
         password = request.data['password']
@@ -35,7 +35,7 @@ class LoginView(APIView):
 
         payload = {
             'id': user.id,
-            'name':user.name,
+            'name':user.first_name,
             'role': user.role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=120),
             'iat': datetime.datetime.utcnow()
@@ -51,6 +51,7 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAdminUser]
     def post(self, request):
         response = Response()
         response.delete_cookie('jwt')
@@ -61,7 +62,7 @@ class LogoutView(APIView):
     
 #Get current User by jwt getting from cookies
 class UserViewJwt(APIView):
-
+    
     def get(self, request):
         token = request.COOKIES.get('jwt')
 

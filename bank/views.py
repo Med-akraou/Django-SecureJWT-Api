@@ -9,11 +9,13 @@ from rest_framework.pagination import LimitOffsetPagination
 import jwt
 from django.core.exceptions import PermissionDenied
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+
 
 # Create your views here.
 
 class  ComptesespeceView(APIView):
-
+    permission_classes = [IsAdminUser]
     def get(self,request):
         compte = Comptesespece.objects.all()
         serializer = ComptesespeceSerializer(compte, many=True)
@@ -31,7 +33,7 @@ class  ComptesespeceView(APIView):
 # get, put and delete by id
 class  ComptesespeceView_pk(APIView):
 
-   
+    permission_classes = [IsAdminUser]
     def get_object(self,pk):
         try:
             return Comptesespece.objects.get(pk=pk)
@@ -77,6 +79,7 @@ class ImputationsespecesPagination(LimitOffsetPagination):
 
 # Imputationsespeces
 class ImputationsespecesList(ListAPIView):
+    permission_classes = [IsAdminUser]
     queryset = Imputationsespeces.objects.all()
     serializer_class = ImputationsespecesSerializer
     filter_backends = (DjangoFilterBackend)
@@ -92,7 +95,7 @@ class ImputationsespecesList(ListAPIView):
 
 class ImputationsespecesCreate(CreateAPIView):
     serializer_class = ImputationsespecesSerializer
-
+    permission_classes = [IsAuthenticated]
     def create(self, request, *args, **kwargs):
         token = self.request.META['HTTP_AUTHORIZATION']
         payload = jwt.decode(token, 'secret', algorithms=['HS256'])
@@ -102,6 +105,7 @@ class ImputationsespecesCreate(CreateAPIView):
 
 
 class ImputationsespecesRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAdminUser]
     queryset = Imputationsespeces.objects.all()
     lookup_field = 'id'
     serializer_class = ImputationsespecesSerializer

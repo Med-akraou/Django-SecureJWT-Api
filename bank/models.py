@@ -1,8 +1,8 @@
 from django.db import models
-from users.models import User
+from django.conf import settings
 
 class Comptesespece(models.Model):
-    idclient = models.ForeignKey(User, on_delete=models.CASCADE)
+    idclient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     datecreation = models.DateTimeField(db_column='DateCreation', blank=True, null=True)  
     web = models.CharField(db_column='Web', blank=True, null=True,max_length=255)  
     etat = models.CharField(db_column='Etat', blank=True, null=True,max_length=255)  
@@ -18,5 +18,11 @@ class Imputationsespeces(models.Model):
     etat = models.IntegerField(db_column='Etat', blank=True, null=True)  
     dateetat = models.DateTimeField(auto_now_add=True)  
     libelle = models.TextField(blank=True, null=True,max_length=255)  
+
+# role des controleurs
+    class Meta:
+        permissions = [
+            ('control_clients', 'Can detect sespect clients')
+        ]
 
 

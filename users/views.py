@@ -93,14 +93,6 @@ class UserRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
     serializer_class = UserSerializer
 
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return super().delete(request, *args, **kwargs)
-
-    def update(self, request, *args, **kwargs): 
-        return super().update(request, *args, **kwargs)
 
 
     

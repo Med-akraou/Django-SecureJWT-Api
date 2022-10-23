@@ -39,37 +39,30 @@ class  ComptesespeceView_pk(APIView):
             return Comptesespece.objects.get(pk=pk)
         except Exception:
             raise Http404
-    
-    def isAdmin(self,request):
-        token = request.META['HTTP_AUTHORIZATION']
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        return payload['role'] == 'Admin'
 
+            
     def get(self, request, pk):
-        if self.isAdmin(request):
-            compte = self.get_object(pk)
-            serializer = ComptesespeceSerializer(compte)
-            return Response(serializer.data)
-        raise PermissionDenied
+        compte = self.get_object(pk)
+        serializer = ComptesespeceSerializer(compte)
+        return Response(serializer.data)
+    
 
         
     def put(self, request, pk):
-        if self.isAdmin(request):
-            compte = self.get_object(pk)
-            serializer = ComptesespeceSerializer(compte, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        raise PermissionDenied
+        compte = self.get_object(pk)
+        serializer = ComptesespeceSerializer(compte, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+       
 
 
     def delete(self, request, pk):
-        if self.isAdmin(request):
             compte = self.get_object(pk)
             custmer.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        raise PermissionDenied
+       
 
 
 #Imputationsespeces pagination
@@ -86,22 +79,13 @@ class ImputationsespecesList(ListAPIView):
     filter_fields = ('id',)
     pagination_class = ImputationsespecesPagination
 
-    def get_queryset(self):
-        token = self.request.META['HTTP_AUTHORIZATION']
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        if payload['role'] == "Admin":
-            return super().get_queryset()
-        raise PermissionDenied
 
 class ImputationsespecesCreate(CreateAPIView):
     serializer_class = ImputationsespecesSerializer
     permission_classes = [IsAuthenticated]
-    def create(self, request, *args, **kwargs):
-        token = self.request.META['HTTP_AUTHORIZATION']
-        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        if payload['role'] == "Admin":
+    def create(self, request, *args, **kwargs):        
            return super().create(request, *args, **kwargs)
-        raise PermissionDenied
+        
 
 
 class ImputationsespecesRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
